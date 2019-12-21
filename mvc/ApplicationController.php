@@ -27,7 +27,7 @@ class ApplicationController {
         /**
          * Load listeners
          */
-        $listenerFactory = new ListenerFactory($configuration->getListeners());
+        $listenerFactory = new ListenerFactory($configuration->getListeners()); 
 
         /**
          * Initialize application object and run its listeners

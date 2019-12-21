@@ -73,38 +73,49 @@ class Configuration {
 
     public function __clone() {}
 
-    public function getXML() {
-
+    public function getXML()
+    {
         return $this->xml;
     }
 
-    public function Routes() {
-
+    public function Routes()
+    {
         return $this->routes;
     }
 
-    public function getViewsPath() {
 
+    public function getEnvironments()
+    {
+        return $this->xml->application->environments;
+    }
+
+    public function getServers()
+    {
+        return $this->xml->application->servers;
+    }
+
+    public function getViewsPath()
+    {
         return (string) $this->xml->application->views_path['path'];
     }
 
-    public function getCompilationsPath() {
-
+    public function getCompilationsPath()
+    {
         return (string) $this->xml->application->compilations_path['path'];
     }
 
-    public function getListeners() {
-
+    public function getListeners()
+    {
         return $this->xml->application->listeners;
     }
 
-    public function getModules() {
-
+    public function getModules()
+    {
         return $this->xml->application->modules;
     }
 
-    public function getMySQLConnectionData() {
-
+    public function getMySQLConnectionData()
+    {
         return $this->xml->application->server;
     }
 
