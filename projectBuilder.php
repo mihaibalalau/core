@@ -16,19 +16,19 @@ $d = [
 function build($arr, $path) {
     foreach ($arr as $key => $value) {
 
-        $ret = null;
-        $output = [];
+        if (is_numeric($key) && !file_exists("{$path}/{$value}")) {
 
-        if (is_numeric($key)) {
-
-            $command = "mkdir \"{$path}/{$value}\" 2>&1";
-            exec($command, $output, $ret);
+                mkdir("{$path}/{$value}");
 
         } else if(is_array($value)){
 
+            if(!file_exists("{$path}/{$key}")) {
+
+                mkdir("{$path}/{$key}");
+            }
+
             build($value, "{$path}/{$key}");
         }
-
     }
 }
 
