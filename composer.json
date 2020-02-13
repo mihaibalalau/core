@@ -1,0 +1,17 @@
+{
+    "name": "mihaibalalau/core",
+    "description": "Lightweight framework",
+    "type": "framework",
+    "authors": [
+        {
+            "name": "mihaibalalau",
+            "email": "mihaibalalau@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    }
+}
