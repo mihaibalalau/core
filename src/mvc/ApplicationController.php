@@ -1,72 +1,58 @@
 <?php
+namespace CORE;
 
 /**
  * Class ApplicationController
+ * @package CORE
  *
- * Sets up main properties for the application, creates
- *      the infrastructure for the development process,
- *      minimal mvc logic.
+ * Creates a minimal MVC framework.
+ * Requires a json configuration file and a file structure.
  *
+ * Provides 3 tools for development
+ *
+ * [1/3] Application
+ *      - holds app's configuration
+ *      - provides an AttributesHolder to move data around without exposing it to the view
+ * [2/3] Request
+ *      - a wrapper for accessing the $_GET, $_POST and $_SERVER superglobals
+ *
+ * [3/3] Response
+ *      - handles the response data, format and response stream
+ *
+ * Development after each of the above object has been initialized is allowed through the use
+ *      of listeners - extend one of the 3 listeners ( ApplicationListener, RequestListener, ResponseListener )
+ * Listeners are executed every time a request is received.
+ * Listeners are executed in the order they are set in the configuration file
+ * The controller is executed between the RequestListener and the ResponseListener, hence enabling you to alter
+ *      the response before it's released to the user
  */
-class ApplicationController {
+class ApplicationController
+{
+    public final function __construct(string $config_file)
+    {
+        $Application = new Components\Application($config_file);
 
-    public final function __construct($configurationFile) {
+        $Listeners = new Listeners($Application->getConfig()->listeners, $Application->getConfig()->listeners_path);
 
-        /**
-         * Load the configuration
-         */
-        Configuration::setXMLFilePath($configurationFile);
+        $Listeners->engageApplicationListeners($Application);
 
-        $configuration = new Configuration();
+        $Request = new Components\Request();
 
-        /**
-         * Load framework modules
-         */
-        new ModuleLoader($configuration->getModules());
+        $Listeners->engageRequestListeners($Application, $Request);
 
-        /**
-         * Load listeners
-         */
-        $listenerFactory = new ListenerFactory($configuration->getListeners()); 
+        $router = new Router($Application->getConfig()->routes, $Request->requestInfo("REDIRECT_URL"));
 
-        /**
-         * Initialize application object and run its listeners
-         */
-        $application = new Application($configuration);
+        $route = $router->getRoute();
 
-        $listenerFactory->engageApplicationListeners($application);
+        $Response = new Components\Response(isset($route->view) ? $route->view : null);
 
-        /**
-         * Initialize request object and run its listeners
-         */
-        $request = new Request();
-        $listenerFactory->engageRequestListeners($application, $request);
-
-
-        /**
-         * Initialize response object
-         */
-        $response = new Response($configuration);
-
-
-        /**
-         * Init controller
-         */
-        try {
-
-            new ControllerFactory($application, $request, $response);
-        } catch (HttpUrlException $e) {
-
-            header("HTTP/1.0 404 Not Found");
-            echo $e->getMessage();
+        if (isset($route->controller)) {
+            require_once("{$Application->getConfig()->controllers_path}/{$route->controller}.php");
+            new $route->controller($Application, $Request, $Response);
         }
 
-        /**
-         * Run response listeners
-         */
-        $listenerFactory->engageResponseListeners($application, $request, $response);
+        $Listeners->engageResponseListeners($Application, $Request, $Response);
 
-        $response->releaseOutput();
-
+        $Response->releaseOutput();
     }
 }

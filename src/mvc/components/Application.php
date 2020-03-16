@@ -1,0 +1,32 @@
+<?php
+namespace CORE\Components;
+use CORE\AttributeHolder;
+
+/**
+ * Class Application
+ * @package CORE
+ * CORE [1/3]
+ *
+ */
+final class Application extends AttributeHolder
+{
+    private $config;
+    private $environment;
+
+    public function __construct($config_file)
+    {
+        $this->config = json_decode(file_get_contents($config_file));
+
+        $this->environment = getenv("ENVIRONMENT") ? : "dev";
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+}

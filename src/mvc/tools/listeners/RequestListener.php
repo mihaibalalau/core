@@ -1,7 +1,11 @@
 <?php
+namespace CORE\Tools\Listeners;
+use CORE\Runnable;
+use CORE\Components\Application;
+use CORE\Components\Request;
 
-abstract class RequestListener implements Runnable {
-
+abstract class RequestListener implements Runnable
+{
     /**
      * @var Application $application
      */
@@ -12,12 +16,10 @@ abstract class RequestListener implements Runnable {
      */
     protected $request;
 
-
-    public function __construct(Application $application, Request $request) {
-
+    public function __construct(Application $application, Request $request)
+    {
         $this->application = $application;
         $this->request = $request;
-
         $this->run();
     }
 }
