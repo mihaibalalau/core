@@ -7,11 +7,5 @@
             "name": "mihaibalalau",
             "email": "mihaibalalau@gmail.com"
         }
-    ],
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "CORE\\": "src/mvc/"
-        }
-    }
+    ]
 }
