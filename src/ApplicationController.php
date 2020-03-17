@@ -40,7 +40,7 @@ class ApplicationController
 
         $Listeners->engageRequestListeners($Application, $Request);
 
-        $router = new Router($Application->getConfig()->routes, $Request->requestInfo("REDIRECT_URL"));
+        $router = new Parts\Router($Application->getConfig()->routes, $Request->requestInfo("REDIRECT_URL"));
 
         $route = $router->getRoute();
 
