@@ -1,5 +1,8 @@
 <?php
-namespace CORE;
+namespace CORE\Parts;
+use CORE\Components\Application;
+use CORE\Components\Request;
+use CORE\Components\Response;
 
 /**
  * Class Listeners
@@ -25,21 +28,21 @@ class Listeners
             $this->listeners[substr($classname, strrpos($classname, "\\") + 1)][] = $listener;
         }
     }
-    public function engageApplicationListeners(Components\Application $application)
+    public function engageApplicationListeners(Application $application)
     {
         foreach($this->listeners['ApplicationListener'] as $applicationListeners) {
             new $applicationListeners($application);
         }
     }
 
-    public function engageRequestListeners(Components\Application $application, Components\Request $request)
+    public function engageRequestListeners(Application $application, Request $request)
     {
         foreach ($this->listeners['RequestListener'] as $requestListener) {
             new $requestListener($application, $request);
         }
     }
 
-    public function engageResponseListeners(Components\Application $application, Components\Request $request, Components\Response $response)
+    public function engageResponseListeners(Application $application, Request $request, Response $response)
     {
         foreach ($this->listeners['ResponseListener'] as $responseListener) {
             new $responseListener($application, $request, $response);
