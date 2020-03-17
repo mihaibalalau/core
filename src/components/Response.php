@@ -34,7 +34,7 @@ final class Response extends AttributeHolder
     {
         ob_start();
 
-        $data = json_encode($this->getAttributes());
+        $data = json_encode($this->attributes());
 
         if (!is_file("{$this->view}.html")) {
             echo $data;
