@@ -48,8 +48,9 @@ class ApplicationController
         $Response->setView(isset($route->view) ? $route->view : null, $Application->getConfig()->views_path);
 
         if (isset($route->controller)) {
-            if ($p = strrpos($route->controller, "/") !== false) {
+            $controller_name = $route->controller;
 
+            if ($p = strrpos($route->controller, "/") !== false) {
                 $controller_name = substr($route->controller, $p + 1);
             }
 
