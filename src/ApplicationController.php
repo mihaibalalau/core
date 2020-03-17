@@ -48,7 +48,7 @@ class ApplicationController
 
         if (isset($route->controller)) {
             require_once("{$Application->getConfig()->controllers_path}/{$route->controller}.php");
-            new $route->controller($Application, $Request, $Response);
+            (new $route->controller($Application, $Request, $Response))->run();
         }
 
         $Listeners->engageResponseListeners($Application, $Request, $Response);
