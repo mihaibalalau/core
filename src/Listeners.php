@@ -22,7 +22,7 @@ class Listeners
         foreach($listeners as $listener) {
             require_once("{$path}/{$listener}.php");
             $classname = get_parent_class($listener);
-            $this->listeners[substr($classname, strrpos("\\",) + 1)][] = $listener;
+            $this->listeners[substr($classname, strrpos($classname, "\\",) + 1)][] = $listener;
         }
     }
     public function engageApplicationListeners(Components\Application $application)
