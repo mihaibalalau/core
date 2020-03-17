@@ -44,7 +44,8 @@ class ApplicationController
 
         $route = $router->getRoute();
 
-        $Response = new Components\Response(isset($route->view) ? $route->view : null);
+        $Response = new Components\Response();
+        $Response->setView(isset($route->view) ? $route->view : null, $Application->getConfig()->views_path);
 
         if (isset($route->controller)) {
             require_once("{$Application->getConfig()->controllers_path}/{$route->controller}.php");

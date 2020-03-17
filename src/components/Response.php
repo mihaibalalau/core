@@ -20,14 +20,9 @@ final class Response extends AttributeHolder
      */
     private $view;
 
-    public function __construct($viewFile = "")
+    public function setView($viewFile, $path = "")
     {
-        $this->view = $viewFile;
-    }
-
-    public function setView($viewFile)
-    {
-        $this->view = $viewFile;
+        $this->view = "{$path}/{$viewFile}";
     }
 
     public function releaseOutput($json = false)
