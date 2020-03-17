@@ -48,7 +48,10 @@ class ApplicationController
         $Response->setView(isset($route->view) ? $route->view : null, $Application->getConfig()->views_path);
 
         if (isset($route->controller)) {
-            $controller_name = substr($route->controller, strrpos($route->controller, "/") + 1);
+            if ($p = strrpos($route->controller, "/") !== false) {
+
+                $controller_name = substr($route->controller, $p + 1);
+            }
 
             require_once("{$Application->getConfig()->controllers_path}/{$route->controller}.php");
             (new $controller_name($Application, $Request, $Response))->run();
