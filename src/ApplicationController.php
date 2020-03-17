@@ -32,7 +32,7 @@ class ApplicationController
     {
         $Application = new Components\Application($config_file);
 
-        $Listeners = new Listeners($Application->getConfig()->listeners, $Application->getConfig()->listeners_path);
+        $Listeners = new Parts\Listeners($Application->getConfig()->listeners, $Application->getConfig()->listeners_path);
 
         $Listeners->engageApplicationListeners($Application);
 
@@ -48,8 +48,10 @@ class ApplicationController
         $Response->setView(isset($route->view) ? $route->view : null, $Application->getConfig()->views_path);
 
         if (isset($route->controller)) {
+            $controller_name = substr($route->controller, strrpos($route->controller, "/") + 1);
+
             require_once("{$Application->getConfig()->controllers_path}/{$route->controller}.php");
-            (new $route->controller($Application, $Request, $Response))->run();
+            (new $controller_name($Application, $Request, $Response))->run();
         }
 
         $Listeners->engageResponseListeners($Application, $Request, $Response);
