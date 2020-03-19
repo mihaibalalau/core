@@ -50,7 +50,7 @@ class ApplicationController
         if (isset($route->controller)) {
             $controller_name = $route->controller;
 
-            if ($p = strrpos($route->controller, "/") !== false) {
+            if (($p = strrpos($route->controller, "/")) !== false) {
                 $controller_name = substr($route->controller, $p + 1);
             }
 
