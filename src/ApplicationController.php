@@ -36,13 +36,11 @@ class ApplicationController
 
         $Listeners->engageApplicationListeners($Application);
 
-        $Request = new Components\Request();
+        $Request = new Components\Request($Application->getConfig()->routes);
 
         $Listeners->engageRequestListeners($Application, $Request);
 
-        $router = new Parts\Router($Application->getConfig()->routes, $Request->requestInfo("REDIRECT_URL"));
-
-        $route = $router->getRoute();
+        $route = $Request->Router()->getRoute();
 
         $Response = new Components\Response();
         $Response->setView(isset($route->view) ? $route->view : null, $Application->getConfig()->views_path);

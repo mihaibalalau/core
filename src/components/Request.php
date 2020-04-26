@@ -1,6 +1,8 @@
 <?php
 namespace CORE\Components;
 
+use \CORE\Parts\Router;
+
 /**
  * Class Request
  * @package CORE
@@ -16,10 +18,16 @@ final class Request
 
     private $requestInfo;
 
-    public function __construct()
+    /**
+     * @var Router $router
+     */
+    private $router;
+
+    public function __construct($knownRoutes)
     {
         $this->parameters = array_merge($_GET, $_POST);
         $this->requestInfo = $_SERVER;
+        $this->router = new Router($knownRoutes, $this->requestInfo("REDIRECT_URL"));
     }
 
     public function parameters($key = null)
@@ -30,11 +38,23 @@ final class Request
         return $this->parameters;
     }
 
+    /**
+     * @param string $key
+     * @return string|null
+     */
     public function requestInfo($key = null)
     {
         if ($key) {
             return isset($this->requestInfo[$key]) ? $this->requestInfo[$key] : null;
         }
         return $this->requestInfo;
+    }
+
+    /**
+     * @return Router
+     */
+    public function Router() : Router
+    {
+        return $this->router;
     }
 }
