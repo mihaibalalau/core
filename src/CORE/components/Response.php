@@ -31,8 +31,17 @@ final class Response extends AttributeHolder
         $this->output = $output;
     }
 
+    public function setHeader($name, $value)
+    {
+        $this->headers[$name] = $value;
+    }
+
     public function releaseOutput($json = false)
     {
+        foreach( $this->headers as $name => $value ) {
+            header($name . ': ' . $value);
+        }
+
         if ( $this->output ) {
             return $this->output;
         }
