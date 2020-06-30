@@ -58,6 +58,6 @@ class ApplicationController
 
         $Listeners->engageResponseListeners($Application, $Request, $Response);
 
-        $Response->releaseOutput();
+        echo $Response->releaseOutput();
     }
 }

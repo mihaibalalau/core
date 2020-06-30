@@ -40,6 +40,9 @@ final class Response extends AttributeHolder
             require_once("{$this->view}.html");
         }
 
-        ob_end_flush();
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
     }
 }
