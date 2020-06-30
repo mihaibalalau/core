@@ -13,7 +13,7 @@ final class Response extends AttributeHolder
     /**
      * @var array $headers
      */
-    private $headers;
+    private $headers = [];
 
     /**
      * @var string $view
