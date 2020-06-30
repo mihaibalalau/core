@@ -19,14 +19,24 @@ final class Response extends AttributeHolder
      * @var string $view
      */
     private $view;
+    private $output = '';
 
-    public function setView($viewFile, $path = "")
+    public function setViewFile($viewFile, $path = "")
     {
         $this->view = "{$path}/{$viewFile}";
     }
 
+    public function setOutput($output)
+    {
+        $this->output = $output;
+    }
+
     public function releaseOutput($json = false)
     {
+        if ( $this->output ) {
+            return $this->output;
+        }
+
         ob_start();
 
         if (!is_file("{$this->view}")) {

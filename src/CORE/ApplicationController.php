@@ -43,7 +43,7 @@ class ApplicationController
         $route = $Request->Router()->getRoute();
 
         $Response = new Components\Response();
-        $Response->setView(isset($route->view) ? "{$route->view}.{$route->format}" : null, $Application->getConfig()->views_path);
+        $Response->setViewFile(isset($route->view) ? "{$route->view}.{$route->format}" : null, $Application->getConfig()->views_path);
 
         if (isset($route->controller)) {
             $controller_name = $route->controller;
