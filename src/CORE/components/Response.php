@@ -37,7 +37,7 @@ final class Response extends AttributeHolder
         } else {
             $data = json_decode($data, true);
 
-            require_once("{$this->view}.html");
+            require_once("{$this->view}");
         }
 
         $output = ob_get_contents();
