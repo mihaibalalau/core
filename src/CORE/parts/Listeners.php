@@ -23,7 +23,12 @@ class Listeners
     public function __construct($listeners, $path)
     {
         foreach($listeners as $listener) {
-            require_once("{$path}/{$listener}.php");
+            $listenerFile = "{$path}/{$listener}.php";
+
+            if ( is_file($listenerFile) ) {
+                require_once($listenerFile);
+            }
+
             $classname = get_parent_class($listener);
             $this->listeners[substr($classname, strrpos($classname, "\\") + 1)][] = $listener;
         }
