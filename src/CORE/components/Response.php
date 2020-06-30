@@ -29,13 +29,13 @@ final class Response extends AttributeHolder
     {
         ob_start();
 
-        $data = json_encode($this->attributes());
-
         if (!is_file("{$this->view}")) {
+            $data = json_encode();
+
             echo $data;
 
         } else {
-            $data = json_decode($data, true);
+            $data = $this->attributes();
 
             require_once("{$this->view}");
         }
