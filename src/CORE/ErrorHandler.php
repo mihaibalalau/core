@@ -18,8 +18,6 @@ class ErrorHandler
 
                 $r = file_put_contents($file, json_encode($error), FILE_APPEND);
 
-                var_dump($file);
-
                 echo("<h1>ERROR!</h1><br/> Check {$file} for more information!");
             });
         } else {
