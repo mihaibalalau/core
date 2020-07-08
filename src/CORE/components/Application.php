@@ -1,6 +1,7 @@
 <?php
 namespace CORE\Components;
 use CORE\AttributeHolder;
+use CORE\ErrorHandler;
 
 /**
  * Class Application
@@ -16,6 +17,8 @@ final class Application extends AttributeHolder
     public function __construct($config_file)
     {
         $this->config = json_decode(file_get_contents($config_file));
+
+        new ErrorHandler();
 
         $this->environment = getenv("ENVIRONMENT") ? : "dev";
     }
