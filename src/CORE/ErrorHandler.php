@@ -9,14 +9,18 @@ class ErrorHandler
 
         if ( $file ) {
 
-            register_shutdown_function(function() use($file) {
+            $currentDir = getcwd();
+
+            register_shutdown_function(function() use($file, $currentDir) {
                 $error = error_get_last();
 
-                $fh = fopen($file, "a+");
+                chdir($currentDir);
 
-                fwrite($fh, json_encode($error));
+                $r = file_put_contents($file, json_encode($error), FILE_APPEND);
 
-                die("ERROR! Check {$file} for more information!");
+                var_dump($file);
+
+                echo("<h1>ERROR!</h1><br/> Check {$file} for more information!");
             });
         } else {
             register_shutdown_function(function() {
@@ -24,7 +28,6 @@ class ErrorHandler
 
                 echo("<h1>ERROR!</h1><br/>");
                 echo($error['message']);
-                die;
             });
         }
     }
