@@ -9,14 +9,15 @@ class Router
 {
     private $route;
     private $parameters = [];
+    private $matchCase;
 
     public function __construct($routes, $requestURI)
     {
         foreach ($routes as $route) {
-            $matchCase = isset($route->match_case) ? $route->match_case : true;
+            $this->matchCase = isset($route->match_case) ? $route->match_case : true;
 
             if (strpos($route->url, '%')) {
-                $parameters = $this->try($route->url, $requestURI, $matchCase);
+                $parameters = $this->try($route->url, $requestURI);
 
                 if ($parameters) {
                     $this->parameters = $parameters;
@@ -24,7 +25,7 @@ class Router
                     break;
                 }
             } else {
-                if ($matchCase) {
+                if ($this->matchCase) {
                     if ($route->url === $requestURI) {
                         $this->route = $route;
                         break;
@@ -44,7 +45,7 @@ class Router
         return $this->route;
     }
 
-    public function parameters($key = null)
+    public function pathParameters($key = null)
     {
         if ($key) {
             return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
@@ -52,8 +53,7 @@ class Router
         return $this->parameters;
     }
 
-    //TODO matchcase
-    private function try($known, $requested, $matchCase)
+    private function try($known, $requested)
     {
         static $parameters = [];
 
@@ -70,7 +70,7 @@ class Router
                         $is_successful = true;
                         if ($known[$new_i] === $requested[$j]) {
                             $parameters[$param_name] = $param_value;
-                            $is_successful = $this->try(substr($known, $new_i), substr($requested, $j), $matchCase);
+                            $is_successful = $this->try(substr($known, $new_i), substr($requested, $j));
                             if (!$is_successful) {
                                 unset($parameters[$param_name]);
                             } else {
@@ -85,7 +85,7 @@ class Router
                 }
             } elseif ($known[$i] === $requested[$j]) {
                 continue;
-            } elseif ($matchCase) {
+            } elseif ($this->matchCase) {
                 return false;
             } else {
                 if (strtolower($known[$i]) === strtolower($requested[$j])) {
