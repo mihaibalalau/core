@@ -30,6 +30,8 @@ class ApplicationController
 {
     public final function __construct(string $config_file)
     {
+        new ErrorHandler();
+
         $Application = new Components\Application($config_file);
 
         $Listeners = new Parts\Listeners($Application->getConfig()->listeners, $Application->getConfig()->listeners_path);
