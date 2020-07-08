@@ -126,9 +126,6 @@ class Router
                 throw new Exception("Bad route parameter configuration at \"{$string}\"");
             }
         }
-        for ($i = 1; $string[$i] !== '%'; $i++ ) {
-            $name .= $string[$i];
-        }
         return ($i < strlen($string)) ? $i : false;
     }
 }
