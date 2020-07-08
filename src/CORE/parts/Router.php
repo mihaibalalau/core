@@ -1,6 +1,8 @@
 <?php
 namespace CORE\Parts;
 
+use Exception;
+
 /**
  * Class Router
  * @package CORE
@@ -107,11 +109,23 @@ class Router
     /**
      * @param string $string String of the format: %PARAM_NAME%some_other_chars_maybe
      * @param mixed $name Variable which will
+     * @throws Exception
      * @return integer Position of the second '%' in the string
      */
     private function parseParameterName($string, &$name)
     {
         $name = '';
+        $i = 1;
+
+        while ( $string[$i] !== '%') {
+            $name .= $string[$i];
+
+            $i++;
+
+            if ( !isset($string[$i]) ) {
+                throw new Exception("Bad route parameter configuration at \"{$string}\"");
+            }
+        }
         for ($i = 1; $string[$i] !== '%'; $i++ ) {
             $name .= $string[$i];
         }
