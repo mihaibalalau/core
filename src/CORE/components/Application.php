@@ -18,7 +18,9 @@ final class Application extends AttributeHolder
     {
         $this->config = json_decode(file_get_contents($config_file));
 
-        new ErrorHandler($this->config->error_log_file);
+        if (!is_null($this->config->error_log_file)) {
+            new ErrorHandler($this->config->error_log_file);
+        }
 
         $this->environment = getenv("ENVIRONMENT") ? : "dev";
     }
