@@ -75,7 +75,7 @@ class Router
                 // Test if route is also a namespace
                 if (isset($route->namespace)) {
                     $clone = clone $route;
-                    $clone->namespace = $namespace->namespace + $clone->namespace;
+                    $clone->namespace = $namespace->namespace . $clone->namespace;
                     $clone->controllers = $namespace->controllers . '/' . $clone->controllers;
                     $clone->views = $namespace->views . '/' . $clone->views;
 
