@@ -12,10 +12,11 @@ abstract class AttributeHolder
         switch ($arg_count) {
             case 2:
                 if ($fill) {
-                    return $this->attributes = $value;
+                    $this->attributes = $value;
                 } else {
-                    return $this->attributes[$key] = $value;
+                    $this->attributes[$key] = $value;
                 }
+                return true;
             case 1:
                 return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
             default:
