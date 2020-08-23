@@ -85,7 +85,7 @@ class Router
                 } else if ($namespace->namespace . $route->url === $requested) {
                     $clone = clone $route;
                     $clone->url = $namespace->namespace . $clone->url;
-                    $clone->controller = $namespace->controllers . $clone->controller;
+                    $clone->controller = $namespace->controllers . '/' . $clone->controller;
                     $clone->view = $namespace->views . '/' . $clone->view;
 
                     return $clone;
