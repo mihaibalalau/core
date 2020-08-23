@@ -1,5 +1,7 @@
 <?php
+
 namespace CORE\Components;
+
 use CORE\AttributeHolder;
 
 /**
@@ -38,11 +40,11 @@ final class Response extends AttributeHolder
 
     public function releaseOutput($json = false)
     {
-        foreach( $this->headers as $name => $value ) {
+        foreach ($this->headers as $name => $value) {
             header($name . ': ' . $value);
         }
 
-        if ( $this->output ) {
+        if ($this->output) {
             return $this->output;
         }
 

@@ -1,5 +1,7 @@
 <?php
+
 namespace CORE\Tools\Listeners;
+
 use CORE\Runnable;
 use CORE\Components\Application;
 use CORE\Components\Request;

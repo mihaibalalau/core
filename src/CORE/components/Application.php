@@ -1,5 +1,7 @@
 <?php
+
 namespace CORE\Components;
+
 use CORE\AttributeHolder;
 use CORE\ErrorHandler;
 
@@ -22,7 +24,7 @@ final class Application extends AttributeHolder
             new ErrorHandler($this->config->error_log_file);
         }
 
-        $this->environment = getenv("ENVIRONMENT") ? : "dev";
+        $this->environment = getenv("ENVIRONMENT") ?: "dev";
     }
 
     public function getConfig()

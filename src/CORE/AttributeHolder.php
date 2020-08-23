@@ -1,4 +1,5 @@
 <?php
+
 namespace CORE;
 
 abstract class AttributeHolder

@@ -1,5 +1,7 @@
 <?php
+
 namespace CORE\Parts;
+
 use CORE\Components\Application;
 use CORE\Components\Request;
 use CORE\Components\Response;
@@ -22,10 +24,10 @@ class Listeners
 
     public function __construct($listeners, $path)
     {
-        foreach($listeners as $listener) {
+        foreach ($listeners as $listener) {
             $listenerFile = "{$path}/{$listener}.php";
 
-            if ( is_file($listenerFile) ) {
+            if (is_file($listenerFile)) {
                 require_once($listenerFile);
             }
 
@@ -33,9 +35,10 @@ class Listeners
             $this->listeners[substr($classname, strrpos($classname, "\\") + 1)][] = $listener;
         }
     }
+
     public function engageApplicationListeners(Application $application)
     {
-        foreach($this->listeners['ApplicationListener'] as $applicationListeners) {
+        foreach ($this->listeners['ApplicationListener'] as $applicationListeners) {
             new $applicationListeners($application);
         }
     }

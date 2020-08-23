@@ -1,4 +1,5 @@
 <?php
+
 namespace CORE;
 
 interface Runnable

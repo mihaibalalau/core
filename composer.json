@@ -1,17 +1,19 @@
 {
-    "name": "mihaibalalau/core",
-    "description": "Lightweight framework",
-    "type": "framework",
-    "authors": [
-        {
-            "name": "mihaibalalau",
-            "email": "mihaibalalau@gmail.com"
-        }
-    ],
-    "require": {
-        "ext-json": "*"
-    },
-    "autoload": {
-        "psr-0": { "CORE": "src/" }
+  "name": "mihaibalalau/core",
+  "description": "Lightweight framework",
+  "type": "framework",
+  "authors": [
+    {
+      "name": "mihaibalalau",
+      "email": "mihaibalalau@gmail.com"
     }
+  ],
+  "require": {
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "CORE": "src/"
+    }
+  }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace CORE\Parts;
 
 use Exception;
@@ -15,17 +16,26 @@ class Router
 
     public function __construct($routes, $requestURI)
     {
+        // Test each route in config.json
         foreach ($routes as $route) {
             $this->matchCase = isset($route->match_case) ? $route->match_case : true;
 
-            if (strpos($route->url, '%')) {
-                $parameters = $this->try($route->url, $requestURI);
+            // If route is namespaced - i.e. is a group of routes sharing a prefix ( /prefix/my/route )
+            if (isset($route->namespace)) {
+                if ($result = $this->testNamespaceRoute($route, $requestURI)) {
+                    $this->route = $result;
+                }
+                // If route has parameters attempt to match and extract
+            } else if (strpos($route->url, '%')) {
+                $parameters = $this->testParamRoute($route->url, $requestURI);
 
                 if ($parameters) {
                     $this->parameters = $parameters;
                     $this->route = $route;
                     break;
                 }
+
+                // If simple route attempt to match
             } else {
                 if ($this->matchCase) {
                     if ($route->url === $requestURI) {
@@ -55,7 +65,38 @@ class Router
         return $this->parameters;
     }
 
-    private function try($known, $requested)
+    private function testNamespaceRoute($namespace, $requested)
+    {
+        // Test namespace
+        if (strpos($requested, $namespace->namespace) !== false) {
+
+            // Test each route in the namespace
+            foreach ($namespace->routes as $route) {
+                // Test if route is also a namespace
+                if (isset($route->namespace)) {
+                    $clone = clone $route;
+                    $clone->namespace = $namespace->namespace + $clone->namespace;
+                    $clone->controllers = $namespace->controllers . '/' . $clone->controllers;
+                    $clone->views = $namespace->views . '/' . $clone->views;
+
+                    if ($result = $this->testNamespaceRoute($clone, $requested)) {
+                        return $result;
+                    }
+                } else if ($namespace->namespace . $route->url === $requested) {
+                    $clone = clone $route;
+                    $clone->url = $namespace->namespace . $clone->url;
+                    $clone->controller = $namespace->controllers . $clone->controller;
+                    $clone->view = $namespace->views . '/' . $clone->view;
+
+                    return $clone;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function testParamRoute($known, $requested)
     {
         static $parameters = [];
 
@@ -76,7 +117,7 @@ class Router
                             if (!$is_successful) {
                                 unset($parameters[$param_name]);
                             } else {
-                                return $parameters ? : true;
+                                return $parameters ?: true;
                             }
                         }
                         if ($known[$new_i] !== $requested[$j] || !$is_successful) {
@@ -109,20 +150,20 @@ class Router
     /**
      * @param string $string String of the format: %PARAM_NAME%some_other_chars_maybe
      * @param mixed $name Variable which will
-     * @throws Exception
      * @return integer Position of the second '%' in the string
+     * @throws Exception
      */
     private function parseParameterName($string, &$name)
     {
         $name = '';
         $i = 1;
 
-        while ( $string[$i] !== '%') {
+        while ($string[$i] !== '%') {
             $name .= $string[$i];
 
             $i++;
 
-            if ( !isset($string[$i]) ) {
+            if (!isset($string[$i])) {
                 throw new Exception("Bad route parameter configuration at \"{$string}\"");
             }
         }

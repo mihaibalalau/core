@@ -1,5 +1,7 @@
 <?php
+
 namespace CORE\Tools;
+
 use CORE\Runnable;
 use CORE\Components\Application;
 use CORE\Components\Request;

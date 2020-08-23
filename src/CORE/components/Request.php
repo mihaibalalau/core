@@ -1,4 +1,5 @@
 <?php
+
 namespace CORE\Components;
 
 use \CORE\Parts\Router;
@@ -53,7 +54,7 @@ final class Request
     /**
      * @return Router
      */
-    public function Router() : Router
+    public function Router(): Router
     {
         return $this->router;
     }

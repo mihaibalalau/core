@@ -1,4 +1,5 @@
 <?php
+
 namespace CORE;
 
 class ErrorHandler
@@ -7,14 +8,14 @@ class ErrorHandler
     {
         ini_set('display_errors', 0);
 
-        if ( $file ) {
+        if ($file) {
 
             $currentDir = getcwd();
 
-            register_shutdown_function(function() use($file, $currentDir) {
+            register_shutdown_function(function () use ($file, $currentDir) {
                 $error = error_get_last();
 
-                if ( $error ) {
+                if ($error) {
                     chdir($currentDir);
 
                     $r = file_put_contents($file, json_encode($error), FILE_APPEND);
@@ -23,10 +24,10 @@ class ErrorHandler
                 }
             });
         } else {
-            register_shutdown_function(function() {
+            register_shutdown_function(function () {
                 $error = error_get_last();
 
-                if ( $error ) {
+                if ($error) {
                     echo("<h1>ERROR!</h1><br/>");
                     echo($error['message']);
                 }
