@@ -10,6 +10,7 @@ abstract class AttributeHolder
     {
         $arg_count = func_num_args();
         switch ($arg_count) {
+            case 3:
             case 2:
                 if ($fill) {
                     $this->attributes = $value;
