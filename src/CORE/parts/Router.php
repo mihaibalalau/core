@@ -77,8 +77,9 @@ class Router
                     $clone = clone $route;
                     $clone->namespace = $namespace->namespace . $clone->namespace;
                     $clone->controllers = $namespace->controllers . '/' . $clone->controllers;
-                    $clone->views = $namespace->views . '/' . $clone->views;
-
+                    if ($clone->views) {
+                        $clone->views = $namespace->views . '/' . $clone->views;
+                    }
                     if ($result = $this->testNamespaceRoute($clone, $requested)) {
                         return $result;
                     }
@@ -86,7 +87,9 @@ class Router
                     $clone = clone $route;
                     $clone->url = $namespace->namespace . $clone->url;
                     $clone->controller = $namespace->controllers . '/' . $clone->controller;
-                    $clone->view = $namespace->views . '/' . $clone->view;
+                    if ($clone->view) {
+                        $clone->view = $namespace->views . '/' . $clone->view;
+                    }
 
                     return $clone;
                 }
