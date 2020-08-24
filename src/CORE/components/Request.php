@@ -36,7 +36,17 @@ final class Request
     public function parameters($key = null)
     {
         if ($key) {
-            return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
+            if (is_array($key)) {
+                $r = [];
+
+                foreach ( $key as $prop ) {
+                    $r[$prop] = $this->parameters[$prop];
+                }
+
+                return $r;
+            } else {
+                return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
+            }
         }
         return $this->parameters;
     }
