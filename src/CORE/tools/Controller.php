@@ -30,4 +30,14 @@ abstract class Controller implements Runnable
         $this->request = $request;
         $this->response = $response;
     }
+
+    protected function request($key = null)
+    {
+        $this->request->parameters($key);
+    }
+
+    protected function response($key = null, $value = null, $fill = null)
+    {
+        $this->response->attributes($key, $value, $fill);
+    }
 }
