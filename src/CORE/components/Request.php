@@ -26,7 +26,10 @@ final class Request
 
     public function __construct($knownRoutes)
     {
-        $this->parameters = array_merge($_GET, $_POST);
+        $json = [];
+        $json = json_decode(file_get_contents("php://input"), true);
+
+        $this->parameters = array_merge($_GET, $_POST, $json);
         $this->requestInfo = $_SERVER;
         $this->router = new Router($knownRoutes, $this->requestInfo("REDIRECT_URL"));
     }
