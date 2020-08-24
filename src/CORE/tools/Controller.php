@@ -33,11 +33,11 @@ abstract class Controller implements Runnable
 
     protected function request($key = null)
     {
-        $this->request->parameters($key);
+        return $this->request->parameters($key);
     }
 
     protected function response($key = null, $value = null, $fill = null)
     {
-        $this->response->attributes($key, $value, $fill);
+        return $this->response->attributes($key, $value, $fill);
     }
 }
