@@ -14,7 +14,7 @@ class Router
     private $parameters = [];
     private $matchCase;
 
-    public function __construct($routes, $requestURI)
+    public function __construct($routes, $requested)
     {
         // Test each route in config.json
         foreach ($routes as $route) {
@@ -22,12 +22,12 @@ class Router
 
             // If route is namespaced - i.e. is a group of routes sharing a prefix ( /prefix/my/route )
             if (isset($route->namespace)) {
-                if ($result = $this->testNamespaceRoute($route, $requestURI)) {
+                if ($result = $this->testNamespaceRoute($route, $requested)) {
                     $this->route = $result;
                 }
                 // If route has parameters attempt to match and extract
             } else if (strpos($route->url, '%')) {
-                $parameters = $this->testParamRoute($route->url, $requestURI);
+                $parameters = $this->testParamRoute($route->url, $requested);
 
                 if ($parameters) {
                     $this->parameters = $parameters;
@@ -38,12 +38,12 @@ class Router
                 // If simple route attempt to match
             } else {
                 if ($this->matchCase) {
-                    if ($route->url === $requestURI) {
+                    if ($route->url === $requested) {
                         $this->route = $route;
                         break;
                     }
                 } else {
-                    if (strtolower($route->url) === strtolower($requestURI)) {
+                    if (strtolower($route->url) === strtolower($requested)) {
                         $this->route = $route;
                         break;
                     }
@@ -82,6 +82,14 @@ class Router
                     }
                     if ($result = $this->testNamespaceRoute($clone, $requested)) {
                         return $result;
+                    }
+                } else if(strpos($route->url, '%')) {
+                    $parameters = $this->testParamRoute($namespace->namespace . $route->url, $requested);
+
+                    if ($parameters) {
+                        $this->parameters = $parameters;
+                        $this->route = $route;
+                        break;
                     }
                 } else if ($namespace->namespace . $route->url === $requested) {
                     $clone = clone $route;
