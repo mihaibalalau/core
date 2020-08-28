@@ -116,7 +116,7 @@ class Router
                         $is_successful = true;
                         if ($known[$new_i] === $requested[$j]) {
                             $parameters[$param_name] = $param_value;
-                            $is_successful = $this->try(substr($known, $new_i), substr($requested, $j));
+                            $is_successful = $this->testParamRoute(substr($known, $new_i), substr($requested, $j));
                             if (!$is_successful) {
                                 unset($parameters[$param_name]);
                             } else {
