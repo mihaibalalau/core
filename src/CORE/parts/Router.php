@@ -83,15 +83,7 @@ class Router
                     if ($result = $this->testNamespaceRoute($clone, $requested)) {
                         return $result;
                     }
-                } else if(strpos($route->url, '%')) {
-                    $parameters = $this->testParamRoute($namespace->namespace . $route->url, $requested);
-
-                    if ($parameters) {
-                        $this->parameters = $parameters;
-                        $this->route = $route;
-                        break;
-                    }
-                } else if ($namespace->namespace . $route->url === $requested) {
+                } else {
                     $clone = clone $route;
                     $clone->url = $namespace->namespace . $clone->url;
                     $clone->controller = $namespace->controllers . '/' . $clone->controller;
@@ -99,13 +91,24 @@ class Router
                         $clone->view = $namespace->views . '/' . $clone->view;
                     }
 
-                    return $clone;
+                    if(strpos($route->url, '%')) {
+                        $parameters = $this->testParamRoute($namespace->namespace . $route->url, $requested);
+
+                        if ($parameters) {
+                            $this->parameters = $parameters;
+                            return $clone;
+                        }
+                    } else if ($namespace->namespace . $route->url === $requested) {
+
+                        return $clone;
+                    }
                 }
             }
         }
 
         return false;
     }
+
 
     private function testParamRoute($known, $requested)
     {
