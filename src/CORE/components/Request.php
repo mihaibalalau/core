@@ -40,7 +40,9 @@ final class Request
                 $r = [];
 
                 foreach ( $key as $prop ) {
-                    $r[$prop] = $this->parameters[$prop];
+                    if (isset($this->parameters[$prop])) {
+                        $r[$prop] = $this->parameters[$prop];
+                    }
                 }
 
                 return $r;
