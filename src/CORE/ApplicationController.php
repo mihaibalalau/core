@@ -59,6 +59,6 @@ class ApplicationController
 
         $Listeners->engageResponseListeners($Application, $Request, $Response);
 
-        echo $Response->releaseOutput();
+        echo $Response->releaseOutput($route->format);
     }
 }

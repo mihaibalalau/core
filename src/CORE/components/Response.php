@@ -18,19 +18,23 @@ final class Response extends AttributeHolder
     private $headers = [];
 
     /**
+     * @var int $status_code
+     */
+    private $status_code = 200;
+
+    /**
      * @var string $view
      */
     private $view;
-    private $output = '';
 
     public function setViewFile($viewFile, $path = "")
     {
         $this->view = "{$path}/{$viewFile}";
     }
 
-    public function setOutput($output)
+    public function setStatusCode($status_code = 200)
     {
-        $this->output = $output;
+        $this->status_code = (int)$status_code;
     }
 
     public function setHeader($name, $value)
@@ -38,30 +42,35 @@ final class Response extends AttributeHolder
         $this->headers[$name] = $value;
     }
 
-    public function releaseOutput($json = false)
+    public function releaseOutput($format)
     {
+        // Set headers
         foreach ($this->headers as $name => $value) {
             header($name . ': ' . $value);
         }
 
-        if ($this->output) {
-            return $this->output;
-        }
+        // Set status code
+        http_response_code($this->status_code);
 
+        // Engage output buffer
         ob_start();
 
-        if (!is_file("{$this->view}")) {
-            $data = json_encode([
-                'status' => 'success',
-                'body' => $this->attributes()
-            ]);
+        $data = [];
 
-            echo $data;
+        if ($format === 'json') {
+            $data['body'] = $this->attributes();
 
-        } else {
-            $data = $this->attributes();
+            $data['status'] = ($this->status_code / 100 !== 2) ? 'error' : 'success';
 
-            require_once("{$this->view}");
+            echo json_encode($data);
+        } else { // Expect a file
+            if (!is_file("{$this->view}")) {
+                throw new \Exception("Configuration error! The '{$format}' requires a file! Check your configuration file for this route!");
+            } else {
+                $data = $this->attributes();
+
+                require_once("{$this->view}");
+            }
         }
 
         $output = ob_get_contents();
