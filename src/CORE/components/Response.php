@@ -60,7 +60,7 @@ final class Response extends AttributeHolder
         if ($format === 'json') {
             $data['body'] = $this->attributes();
 
-            $data['status'] = ($this->status_code / 100 !== 2) ? 'error' : 'success';
+            $data['status'] = ( (int) ($this->status_code / 100) !== 2) ? 'error' : 'success';
 
             echo json_encode($data);
         } else { // Expect a file
