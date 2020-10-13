@@ -16,6 +16,10 @@ final class Request
      * @var array $parameters
      */
     private $parameters = [];
+    /**
+     * @var array $files
+     */
+    private $files = [];
 
     private $requestInfo;
 
@@ -31,6 +35,7 @@ final class Request
         $this->parameters = array_merge($_GET, $_POST, $json);
         $this->requestInfo = $_SERVER;
         $this->router = new Router($knownRoutes, $this->requestInfo("REDIRECT_URL"));
+        $this->files = $_FILES;
     }
 
     public function parameters($key = null)
@@ -63,6 +68,14 @@ final class Request
             return isset($this->requestInfo[$key]) ? $this->requestInfo[$key] : null;
         }
         return $this->requestInfo;
+    }
+
+    /**
+     * @return array
+     */
+    public function files()
+    {
+        return $this->files;
     }
 
     /**
