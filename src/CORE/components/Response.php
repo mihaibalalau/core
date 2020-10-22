@@ -58,6 +58,9 @@ final class Response extends AttributeHolder
         $data = [];
 
         if ($format === 'json') {
+            // Set Content-Type
+            header("Content-Type: application/json");
+
             $data['body'] = $this->attributes();
 
             $data['status'] = ( (int) ($this->status_code / 100) !== 2) ? 'error' : 'success';
