@@ -53,6 +53,9 @@ class ApplicationController
         if ( $request_status === 400 ) {
             $Response->setStatusCode(400);
             $Response->attributes('', 'Bad request!', true);
+
+            die($Response->releaseOutput('json'));
+
         } else if ( $request_status === 404) {
             $Response->setStatusCode(404);
             $NotFoundController = "NotFoundController";
