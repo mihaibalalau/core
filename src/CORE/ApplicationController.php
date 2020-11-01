@@ -48,6 +48,7 @@ class ApplicationController
         if (!$route) {
 
             $NotFoundController = "NotFoundController";
+            http_response_code(404);
 
             if ( is_file("{$Application->getConfig()->controllers_path}/NotFoundController.php")) {
 
@@ -55,7 +56,6 @@ class ApplicationController
                 $route->url = $Request->requestInfo('REDIRECT_URL');
                 $route->controller = $NotFoundController;
             } else {
-                http_response_code(404);
                 die("Page not found! Create a 'NotFoundController' controller to customize the behaviour of this error");
             }
         }
