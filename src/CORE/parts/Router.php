@@ -2,6 +2,8 @@
 
 namespace CORE\Parts;
 
+use \Exception;
+
 /**
  * Class Router
  * @package CORE
@@ -10,13 +12,12 @@ class Router
 {
     private $route;
     private $parameters = [];
-    private $matchCase;
+    private $status = 200;
 
-    public function __construct($routes, $requested)
+    public function __construct($routes, $requested, $requestMethod)
     {
         // Test each route in config.json
         foreach ($routes as $route) {
-
             $match_case = isset($route->match_case) ? $route->match_case : true;
 
             // If route is namespaced - i.e. is a group of routes sharing a prefix ( /prefix/my/route )
@@ -25,29 +26,48 @@ class Router
                     $this->route = $result;
                 }
                 // If route has parameters attempt to match and extract
-            } else if (strpos($route->url, '%')) {
-                $parameters = $this->testParamRoute($route->url, $requested, $match_case);
-
-                if ($parameters) {
-                    $this->parameters = $parameters;
-                    $this->route = $route;
-                    break;
-                }
-
-                // If simple route attempt to match
+            } else if (!isset($route->url)) {
+                throw new Exception("Each route must have an 'url'(string) property! Check the configuration file!");
             } else {
+                if (strpos($route->url, '%')) {
+                    $parameters = $this->testParamRoute($route->url, $requested, $match_case);
 
-                if ($match_case) {
-                    if ($route->url === $requested) {
+                    if ($parameters) {
+                        $this->parameters = $parameters;
                         $this->route = $route;
                         break;
                     }
+
+                    // If simple route attempt to match
                 } else {
-                    if (strtolower($route->url) === strtolower($requested)) {
-                        $this->route = $route;
-                        break;
+
+                    if ($match_case) {
+                        if ($route->url === $requested) {
+                            $this->route = $route;
+                            break;
+                        }
+                    } else {
+                        if (strtolower($route->url) === strtolower($requested)) {
+                            $this->route = $route;
+                            break;
+                        }
                     }
                 }
+            }
+
+            if ($this->route) {
+                // If route
+                if (!isset($this->route->methods)) {
+                    throw new Exception("Each route must have a 'methods'(array[(string)]) property! Check the configuration file!");
+                } else {
+                    if (!in_array($requestMethod, $this->route->methods)) {
+                        $this->status = 400;
+                    } else {
+                        $this->status = 200;
+                    }
+                }
+            } else {
+                $this->status = 404;
             }
         }
     }
@@ -57,12 +77,27 @@ class Router
         return $this->route;
     }
 
-    public function pathParameters($key = null)
+    /**
+     * Returns route parameters as matched with the route configuration
+     * @param null $key
+     * @return array|bool|mixed|null
+     *
+     */
+    public function parameters($key = null)
     {
         if ($key) {
             return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
         }
         return $this->parameters;
+    }
+
+    /**
+     * Returns the preliminary HTTP response status code based on the configuration parsing
+     * @return int
+     */
+    public function getStatus() : int
+    {
+        return $this->status;
     }
 
     private function testNamespaceRoute($namespace, $requested)
@@ -188,7 +223,7 @@ class Router
             $i++;
 
             if (!isset($string[$i])) {
-                throw new Exception("Bad route parameter configuration at \"{$string}\"");
+                throw new ConfigurationException("Bad route parameter configuration at \"{$string}\"");
             }
         }
         return ($i < strlen($string)) ? $i : false;
