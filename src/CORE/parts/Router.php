@@ -2,8 +2,6 @@
 
 namespace CORE\Parts;
 
-use Exception;
-
 /**
  * Class Router
  * @package CORE
@@ -18,7 +16,8 @@ class Router
     {
         // Test each route in config.json
         foreach ($routes as $route) {
-            $this->matchCase = isset($route->match_case) ? $route->match_case : true;
+
+            $match_case = isset($route->match_case) ? $route->match_case : true;
 
             // If route is namespaced - i.e. is a group of routes sharing a prefix ( /prefix/my/route )
             if (isset($route->namespace)) {
@@ -27,7 +26,7 @@ class Router
                 }
                 // If route has parameters attempt to match and extract
             } else if (strpos($route->url, '%')) {
-                $parameters = $this->testParamRoute($route->url, $requested);
+                $parameters = $this->testParamRoute($route->url, $requested, $match_case);
 
                 if ($parameters) {
                     $this->parameters = $parameters;
@@ -37,7 +36,8 @@ class Router
 
                 // If simple route attempt to match
             } else {
-                if ($this->matchCase) {
+
+                if ($match_case) {
                     if ($route->url === $requested) {
                         $this->route = $route;
                         break;
@@ -72,9 +72,12 @@ class Router
 
             // Test each route in the namespace
             foreach ($namespace->routes as $route) {
+
+                $clone = clone $route;
+                $match_case = isset($clone->match_case) ? $clone->match_case : true;
+
                 // Test if route is also a namespace
-                if (isset($route->namespace)) {
-                    $clone = clone $route;
+                if (isset($clone->namespace)) {
                     $clone->namespace = $namespace->namespace . $clone->namespace;
                     $clone->controllers = $namespace->controllers . '/' . $clone->controllers;
                     if (isset($clone->views)) {
@@ -84,23 +87,30 @@ class Router
                         return $result;
                     }
                 } else {
-                    $clone = clone $route;
                     $clone->url = $namespace->namespace . $clone->url;
                     $clone->controller = $namespace->controllers . '/' . $clone->controller;
                     if (isset($clone->view)) {
                         $clone->view = $namespace->views . '/' . $clone->view;
                     }
 
+
                     if(strpos($route->url, '%')) {
-                        $parameters = $this->testParamRoute($namespace->namespace . $route->url, $requested);
+                        $parameters = $this->testParamRoute($namespace->namespace . $route->url, $requested, $match_case);
 
                         if ($parameters) {
                             $this->parameters = $parameters;
                             return $clone;
                         }
-                    } else if ($namespace->namespace . $route->url === $requested) {
-
-                        return $clone;
+                    } else {
+                        if ($match_case) {
+                            if ($namespace->namespace . $route->url === $requested) {
+                                return $clone;
+                            }
+                        } else {
+                            if (strtolower($namespace->namespace . $route->url) === strtolower($requested)) {
+                                return $clone;
+                            }
+                        }
                     }
                 }
             }
@@ -110,7 +120,7 @@ class Router
     }
 
 
-    private function testParamRoute($known, $requested)
+    private function testParamRoute($known, $requested, $match_case)
     {
         static $parameters = [];
 
@@ -127,7 +137,7 @@ class Router
                         $is_successful = true;
                         if ($known[$new_i] === $requested[$j]) {
                             $parameters[$param_name] = $param_value;
-                            $is_successful = $this->testParamRoute(substr($known, $new_i), substr($requested, $j));
+                            $is_successful = $this->testParamRoute(substr($known, $new_i), substr($requested, $j), $match_case);
                             if (!$is_successful) {
                                 unset($parameters[$param_name]);
                             } else {
@@ -142,7 +152,7 @@ class Router
                 }
             } elseif ($known[$i] === $requested[$j]) {
                 continue;
-            } elseif ($this->matchCase) {
+            } elseif ($match_case) {
                 return false;
             } else {
                 if (strtolower($known[$i]) === strtolower($requested[$j])) {

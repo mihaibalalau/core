@@ -2,6 +2,8 @@
 
 namespace CORE;
 
+use mysql_xdevapi\Exception;
+
 /**
  * Class ApplicationController
  * @package CORE
@@ -42,6 +44,21 @@ class ApplicationController
         $Listeners->engageRequestListeners($Application, $Request);
 
         $route = $Request->Router()->getRoute();
+
+        if (!$route) {
+
+            $NotFoundController = "NotFoundController";
+
+            if ( is_file("{$Application->getConfig()->controllers_path}/NotFoundController.php")) {
+
+                $route = new \stdClass();
+                $route->url = $Request->requestInfo('REDIRECT_URL');
+                $route->controller = $NotFoundController;
+            } else {
+                http_response_code(404);
+                die("Page not found! Create a 'NotFoundController' controller to customize the behaviour of this error");
+            }
+        }
 
         $Response = new Components\Response();
         $Response->setViewFile(isset($route->view) ? "{$route->view}.{$route->format}" : null, $Application->getConfig()->views_path);
