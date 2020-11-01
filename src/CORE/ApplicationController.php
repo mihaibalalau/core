@@ -48,8 +48,12 @@ class ApplicationController
         $Response = new Components\Response();
         $Response->setViewFile(isset($route->view) ? "{$route->view}.{$route->format}" : null, $Application->getConfig()->views_path);
 
+        $request_status  = $Request->Router()->getStatus();
 
-        if (!$route) {
+        if ( $request_status === 400 ) {
+            $Response->setStatusCode(400);
+            $Response->attributes('', 'Bad request!', true);
+        } else if ( $request_status === 404) {
             $Response->setStatusCode(404);
             $NotFoundController = "NotFoundController";
 
@@ -60,7 +64,7 @@ class ApplicationController
                 $route->format = 'json';
                 $route->controller = $NotFoundController;
             } else {
-                die("Page not found! Create a 'NotFoundController' controller to customize the behaviour of this error");
+                $Response->attributes('', 'Path not found! @dev Create a \'NotFoundController\' controller to customize the behaviour of this error');
             }
         }
 

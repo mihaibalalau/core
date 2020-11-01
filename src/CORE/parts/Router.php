@@ -54,21 +54,24 @@ class Router
                     }
                 }
             }
+        }
 
-            if ($this->route) {
-                // If route
-                if (!isset($this->route->methods)) {
-                    throw new Exception("Each route must have a 'methods'(array[(string)]) property! Check the configuration file!");
-                } else {
-                    if (!in_array($requestMethod, $this->route->methods)) {
-                        $this->status = 400;
-                    } else {
-                        $this->status = 200;
-                    }
-                }
+        if ($this->route) {
+            if (!isset($this->route->methods)) {
+                throw new Exception("Each route must have a 'methods'(array[(string)]) property! Check the configuration file!");
             } else {
-                $this->status = 404;
+                if (!in_array($requestMethod, $this->route->methods)) {
+                    $this->status = 400;
+                } else {
+                    $this->status = 200;
+                }
             }
+
+            if (!isset($this->route->format)) {
+                $this->route->format = 'json';
+            }
+        } else {
+            $this->status = 404;
         }
     }
 
