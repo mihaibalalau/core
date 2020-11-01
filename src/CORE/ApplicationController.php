@@ -54,6 +54,7 @@ class ApplicationController
 
                 $route = new \stdClass();
                 $route->url = $Request->requestInfo('REDIRECT_URL');
+                $route->format = 'json';
                 $route->controller = $NotFoundController;
             } else {
                 die("Page not found! Create a 'NotFoundController' controller to customize the behaviour of this error");
