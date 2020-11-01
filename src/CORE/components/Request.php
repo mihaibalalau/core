@@ -35,7 +35,7 @@ final class Request
         $this->parameters = array_merge($_GET, $_POST, $json);
         $this->requestInfo = $_SERVER;
         $this->router = new Router($knownRoutes, $this->requestInfo('REDIRECT_URL'), $this->requestInfo('REQUEST_METHOD'));
-        $this->files = isset($_FILES['files']) ? $_FILES['files'] : [];
+        $this->files = $_FILES;
     }
 
     public function parameters($key = null)
