@@ -45,12 +45,15 @@ class ApplicationController
 
         $route = $Request->Router()->getRoute();
 
+        $Response = new Components\Response();
+        $Response->setViewFile(isset($route->view) ? "{$route->view}.{$route->format}" : null, $Application->getConfig()->views_path);
+
+
         if (!$route) {
-
+            $Response->setStatusCode(404);
             $NotFoundController = "NotFoundController";
-            http_response_code(404);
 
-            if ( is_file("{$Application->getConfig()->controllers_path}/NotFoundController.php")) {
+            if (is_file("{$Application->getConfig()->controllers_path}/NotFoundController.php")) {
 
                 $route = new \stdClass();
                 $route->url = $Request->requestInfo('REDIRECT_URL');
@@ -60,9 +63,6 @@ class ApplicationController
                 die("Page not found! Create a 'NotFoundController' controller to customize the behaviour of this error");
             }
         }
-
-        $Response = new Components\Response();
-        $Response->setViewFile(isset($route->view) ? "{$route->view}.{$route->format}" : null, $Application->getConfig()->views_path);
 
         if (isset($route->controller)) {
             $controller_name = $route->controller;
