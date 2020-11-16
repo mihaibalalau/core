@@ -12,25 +12,18 @@ use \CORE\Parts\Router;
  */
 final class Request
 {
-    /**
-     * @var array $parameters
-     */
     private $parameters = [];
-    /**
-     * @var array $files
-     */
     private $files = [];
-
-    private $requestInfo;
+    private $requestInfo = [];
 
     /**
      * @var Router $router
      */
     private $router;
 
-    public function __construct($knownRoutes)
+    public function __construct(array $knownRoutes)
     {
-        $json = json_decode(file_get_contents("php://input"), true) ? : [];
+        $json = json_decode(file_get_contents("php://input"), true) ?: [];
         parse_str(file_get_contents("php://input"), $url_encoded);
 
         $this->parameters = array_merge($_GET, $_POST, $json, $url_encoded);
@@ -39,13 +32,13 @@ final class Request
         $this->files = $_FILES;
     }
 
-    public function parameters($key = null)
+    public function parameters(string $key = null)
     {
         if ($key) {
             if (is_array($key)) {
                 $r = [];
 
-                foreach ( $key as $prop ) {
+                foreach ($key as $prop) {
                     if (isset($this->parameters[$prop])) {
                         $r[$prop] = $this->parameters[$prop];
                     }
@@ -59,11 +52,8 @@ final class Request
         return $this->parameters;
     }
 
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function requestInfo($key = null)
+
+    public function requestInfo(string $key = null)
     {
         if ($key) {
             return isset($this->requestInfo[$key]) ? $this->requestInfo[$key] : null;
@@ -71,17 +61,14 @@ final class Request
         return $this->requestInfo;
     }
 
-    /**
-     * @return array
-     */
-    public function files()
+    public function files(string $key = null)
     {
+        if ($key) {
+            return isset($this->files[$key]) ? $this->files[$key] : null;
+        }
         return $this->files;
     }
 
-    /**
-     * @return Router
-     */
     public function Router(): Router
     {
         return $this->router;
