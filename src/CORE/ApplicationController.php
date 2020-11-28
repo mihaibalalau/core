@@ -67,7 +67,7 @@ class ApplicationController
                 $route->format = 'json';
                 $route->controller = $NotFoundController;
             } else {
-                $Response->attributes('', 'Path not found! @dev Create a \'NotFoundController\' controller to customize the behaviour of this error');
+                $Response->attributes('', 'Path not found! @dev Create a \'NotFoundController\' controller to customize the output of this error', true);
             }
         }
 
@@ -85,5 +85,9 @@ class ApplicationController
         $Listeners->engageResponseListeners($Application, $Request, $Response);
 
         echo $Response->releaseOutput($route->format);
+    }
+
+    private function handleRouterResponse($statusCodeInt) {
+
     }
 }

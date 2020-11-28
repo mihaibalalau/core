@@ -55,22 +55,23 @@ final class Response extends AttributeHolder
         // Engage output buffer
         ob_start();
 
-        $data = [];
+        $attributes = $this->attributes();
 
-        if ($format === 'json') {
+        if (is_null($format) && is_string($attributes)) {
+            echo $attributes;
+        } elseif ($format === 'json') {
             // Set Content-Type
             header("Content-Type: application/json;charset=utf-8");
 
-            $data['body'] = $this->attributes();
-
-            $data['status'] = ( (int) ($this->status_code / 100) !== 2) ? 'error' : 'success';
-
-            echo json_encode($data);
+            echo json_encode([
+                'body' => $attributes,
+                'status' => ( (int) ($this->status_code / 100) !== 2) ? 'error' : 'success'
+            ]);
         } else { // Expect a file
             if (!is_file("{$this->view}")) {
-                throw new \Exception("Configuration error! The '{$format}' requires a file! Check your configuration file for this route!");
+                throw new \Exception("Configuration error! The '{$format}' format expects a file! Check your configuration file for this route!");
             } else {
-                $data = $this->attributes();
+                $data = $attributes;
 
                 require_once("{$this->view}");
             }
