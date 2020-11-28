@@ -84,10 +84,6 @@ class ApplicationController
 
         $Listeners->engageResponseListeners($Application, $Request, $Response);
 
-        echo $Response->releaseOutput($route->format);
-    }
-
-    private function handleRouterResponse($statusCodeInt) {
-
+        echo $Response->releaseOutput(@$route->format);
     }
 }
